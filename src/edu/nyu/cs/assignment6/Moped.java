@@ -22,7 +22,7 @@ public class Moped {
      private String direction;
 
      // Create constants
-     private static final int GAS_CONSUM_PER_MOVE = 10;
+     private static final int GAS_CONSUM_PER_MOVE = 5;
 
      // Create Bounds of map
      private static final int MAX_STREET = 200;
@@ -31,8 +31,7 @@ public class Moped {
      private static final int MIN_AVE = 1;
      
      // Gases tank and current gases
-     private static final int MAX_GAS = 100;
-     private int gases = 30;
+     private int gases = 100;
      
      // data field for parking with default false
      private boolean isMove = true;
@@ -92,10 +91,8 @@ public class Moped {
      * "1st", "nd" in "2nd", "rd" in "3rd", "th" in "4th", etc, must be correct.
      */
     public void printLocation() {
-        String suffixSt = getSuffix(this.street), suffixAve = getSuffix(this.avenue), adveString = "";
-        if (this.street == 12 && this.avenue == 4) 
-            adveString = "Did you know The Strand has 18 Miles of new, used and rare books, and has been in business since 1927?";
-        System.out.println("Now at " + this.street + suffixSt + ". and " + this.avenue + suffixAve + ", facing " + this.getOrientation() + ". " + adveString);
+        String suffixSt = getSuffix(this.street), suffixAve = getSuffix(this.avenue), advString = getAdvInfo(this.street, this.avenue);
+        System.out.println("Now at " + this.street + suffixSt + ". and " + this.avenue + suffixAve + ", facing " + this.getOrientation() + ". " + advString);
     }
 
     /**
@@ -106,28 +103,23 @@ public class Moped {
      * This method must not print anything.
      */
     public void turnLeft() {
-        int[] arr = getLocation();
         if (this.getGasLevel() != 0 && isMove) {
             switch (this.direction) {
                 case "north": 
-                    if (inBound(new int[] {arr[0], arr[1] + 1})) this.avenue = arr[1]++;
                     this.direction = "west";
                     break;
                 case "south":
-                    if (inBound(new int[] {arr[0], arr[1] - 1})) this.avenue = arr[1]--;
                     this.direction = "east";
                     break;
                 case "west":
-                    if (inBound(new int[] {arr[0] - 1, arr[1]})) this.street = arr[0]--;
                     this.direction = "south";
                     break;
                 case "east":
-                    if (inBound(new int[] {arr[0] + 1, arr[1]})) this.street = arr[0]++;
                     this.direction = "north";
                     break;
             }
-            gases -= GAS_CONSUM_PER_MOVE;
         }
+        this.gases -= GAS_CONSUM_PER_MOVE;
     }
 
     /**
@@ -138,28 +130,23 @@ public class Moped {
      * This method must not print anything.
      */
     public void turnRight() {
-        int[] arr = getLocation();
         if (this.getGasLevel() != 0 && isMove) {
             switch (this.direction) {
                 case "north": 
-                    if (inBound(new int[] {arr[0], arr[1] - 1})) this.avenue = arr[1]--;
                     this.direction = "east";
                     break;
                 case "south":
-                    if (inBound(new int[] {arr[0], arr[1] + 1})) this.avenue = arr[1]++;
                     this.direction = "west";
                     break;
                 case "west":
-                    if (inBound(new int[] {arr[0] + 1, arr[1]})) this.street = arr[0]++;
                     this.direction = "north";
                     break;
                 case "east":
-                    if (inBound(new int[] {arr[0] - 1, arr[1]})) this.street = arr[0]--;
                     this.direction = "south";
                     break;
             }
-            gases -= GAS_CONSUM_PER_MOVE;
         }
+        this.gases -= GAS_CONSUM_PER_MOVE;
     }
 
     /**
@@ -174,19 +161,30 @@ public class Moped {
         if (this.getGasLevel() != 0 && isMove) {
             switch (this.direction) {
                 case "north": 
-                    if (inBound(new int[] {arr[0] + 1, arr[1]})) this.street = ++arr[0];
+                    if (inBound(new int[] {arr[0] + 1, arr[1]})) {
+                        this.street = ++arr[0];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    }
                     break;
                 case "south":
-                    if (inBound(new int[] {arr[0] - 1, arr[1] + 1})) this.street = --arr[0];
+                    if (inBound(new int[] {arr[0] - 1, arr[1] + 1})) {
+                        this.street = --arr[0];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    }
                     break;
                 case "west":
-                    if (inBound(new int[] {arr[0], arr[1] + 1})) this.avenue = ++arr[1];
+                    if (inBound(new int[] {arr[0], arr[1] + 1})) {
+                        this.avenue = ++arr[1];
+                        this.gases -= GAS_CONSUM_PER_MOVE;   
+                    }
                     break;
                 case "east":
-                    if (inBound(new int[] {arr[0], arr[1] - 1})) this.avenue = --arr[1];
+                    if (inBound(new int[] {arr[0], arr[1] - 1})) {
+                        this.avenue = --arr[1];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    }
                     break;
             }
-            gases -= GAS_CONSUM_PER_MOVE;
         }
     }
 
@@ -203,19 +201,31 @@ public class Moped {
         if (this.getGasLevel() != 0 && isMove) {
             switch (this.direction) {
                 case "north": 
-                    if (inBound(new int[] {arr[0] - 1, arr[1]})) this.street = --arr[0];
+                    if (inBound(new int[] {arr[0] - 1, arr[1]})) {
+                        this.street = --arr[0];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    }
                     break;
                 case "south":
-                    if (inBound(new int[] {arr[0] + 1, arr[1] + 1})) this.street = ++arr[0];
+                    if (inBound(new int[] {arr[0] + 1, arr[1] + 1})) {
+                        this.street = ++arr[0];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    }
                     break;
                 case "west":
-                    if (inBound(new int[] {arr[0], arr[1] - 1})) this.avenue = --arr[1];
+                    if (inBound(new int[] {arr[0], arr[1] - 1})) {
+                        this.avenue = --arr[1];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    }
                     break;
                 case "east":
-                    if (inBound(new int[] {arr[0], arr[1] + 1})) this.avenue = ++arr[1];
+                    if (inBound(new int[] {arr[0], arr[1] + 1})) {
+                        this.avenue = ++arr[1];
+                        this.gases -= GAS_CONSUM_PER_MOVE;
+                    } 
                     break;
             }
-            gases -= GAS_CONSUM_PER_MOVE;
+            this.gases -= GAS_CONSUM_PER_MOVE;
         }
     }
 
@@ -241,8 +251,7 @@ public class Moped {
         if (this.gases == 0) 
             System.out.println("We have run out of gas. Bye bye!");
         else {
-            double percentage = 1.0 * this.gases / MAX_GAS * 100;
-            System.out.println("The gas tank is currently " + percentage + "% full.");
+            System.out.println("The gas tank is currently " + this.gases + "% full.");
         }
     }
 
@@ -252,7 +261,7 @@ public class Moped {
      * Fills the gas level to the maximum.
      */
     public void fillGas() {
-        this.gases = MAX_GAS;
+        this.gases = 100;
     }
 
     /**
@@ -261,7 +270,7 @@ public class Moped {
      */
     public void park() {
         System.out.println("We have parked.");
-        this.isMove = !isMove;
+        isMove = !isMove;
     }
 
     /**
@@ -271,43 +280,29 @@ public class Moped {
      * gas, as according to the instructions.
      */
     public void goToXianFamousFoods() {
-        int[] xianLocation = {15, 8};
-        int[] currentLocation = getLocation();
+        int targetStreet = 15;
+        int targetAvenue = 8;
+    
+        while ((this.street != targetStreet || this.avenue != targetAvenue) && this.isMove && inBound(getLocation())) {
+            int streetDiff = targetStreet - this.street;
+            int aveDiff = targetAvenue - this.avenue;
 
-        int streetDiff = xianLocation[0] - currentLocation[0];
-        int aveDiff = xianLocation[1] - currentLocation[1];
+            if (this.gases < 40) fillGas();
 
-        while (this.street != xianLocation[0] || this.avenue != xianLocation[1]) {
             if (streetDiff > 0) {
-                if (!this.getOrientation().equals("north")) {
-                    turnRight();
-                } else {
-                    goStraight();
-                }
+                this.street++;
             } else if (streetDiff < 0) {
-                if (!this.getOrientation().equals("south")) {
-                    turnLeft();
-                } else {
-                    goStraight();
-                }
+                this.street--;
             }
 
             if (aveDiff > 0) {
-                if (!this.getOrientation().equals("east")) {
-                    turnLeft();
-                } else {
-                    goStraight();
-                }
+                this.avenue++;
             } else if (aveDiff < 0) {
-                if (!this.getOrientation().equals("west")) {
-                    turnRight();
-                } else {
-                    goStraight();
-                }
-            } 
-        }
-        if (this.gases == 0) {
-            System.out.println("Ran out of gas!");
+                this.avenue--;
+            }
+
+            printLocation();
+            this.gases -= GAS_CONSUM_PER_MOVE;
         }
     }
 
@@ -363,10 +358,18 @@ public class Moped {
         }
     }
 
-    // Constuct a mwthod to check is car moving in bound
+    // Constuct a method to check is car moving in bound
     private boolean inBound(int[] arr) {
         boolean streetBound = arr[0] <= MAX_STREET && arr[0] >= MIN_STREET;
         boolean aveBound = arr[1] <= MAX_AVE && arr[1] >= MIN_AVE;
         return streetBound && aveBound;
+    }
+
+    // Construct a method to store advertisment for special locations
+    private String getAdvInfo(int street, int avenue) {
+        String advString = "";
+        if (street == 12 && avenue == 4) advString = "Did you know The Strand has 18 Miles of new, used and rare books, and has been in business since 1927?";
+        else if (street == 4 && avenue == 5) advString = "We are now somehow at Washington Square Park...";
+        return advString;
     }
 }
